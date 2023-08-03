@@ -6,6 +6,7 @@ import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import { BsTrash } from "react-icons/bs";
+
 export default function Expenses() {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
@@ -21,21 +22,25 @@ export default function Expenses() {
       setExpensesList(expenses);
     }
   }, []);
+
   const addExpenses = () => {
     // 1. clone the list
     const newExpensesList = [...expensesList];
+
     // 2. make sure name & amount is not empty
     if (name && amount) {
-      // 3. push new expenses
+      // 3. push new income
       newExpensesList.push({
         id: nanoid(),
         name: name,
-        category: category,
         amount: parseInt(amount),
+        category: category,
       });
+
       // 4. save into the local storage & set the new state for expensesList
       setExpensesList(newExpensesList);
       localStorage.setItem("expenses", JSON.stringify(newExpensesList));
+
       // 5. clear the fields
       setName("");
       setAmount(0);
@@ -43,6 +48,7 @@ export default function Expenses() {
       alert("Please insert your expenses");
     }
   };
+
   const deleteExpenses = (id) => {
     // 1. filter the list
     const newExpensesList = expensesList.filter((i) => i.id !== id);
@@ -50,42 +56,36 @@ export default function Expenses() {
     setExpensesList(newExpensesList);
     localStorage.setItem("expensess", JSON.stringify(newExpensesList));
   };
+
   const checkBoxAll = (event) => {
     if (event.target.checked) {
       // 1. clone the existing checked list
       const newCheckedList = [];
-      expensesList.forEach((i) => {
-        newCheckedList.push(i.id);
+      expensesList.forEach((e) => {
+        newCheckedList.push(e.id);
       });
       setCheckedList(newCheckedList);
-      // set checkAll
       setCheckAll(true);
     } else {
-      // reset the array
       setCheckedList([]);
-      // unset checkall
       setCheckAll(false);
     }
   };
+
   const checkboxOne = (event, id) => {
-    // if is checked
     if (event.target.checked) {
-      // 1. clone existing checked list
       const newCheckedList = [...checkedList];
-      // 2. push new id into the checked list
       newCheckedList.push(id);
-      // 3. update the state
       setCheckedList(newCheckedList);
     } else {
-      // 1. remove the id from the checked list
-      const newCheckedList = checkedList.filter((i) => i !== id);
-      // 2. update the state
+      const newCheckedList = checkedList.filter((e) => e !== id);
       setCheckedList(newCheckedList);
     }
   };
+
   const deleteCheckedItems = () => {
     // 1. filter the list
-    const newExpensesList = expensesList.filter((i) => {
+    const newexpensesList = expensesList.filter((i) => {
       // make sure the id is in the checked list
       if (checkedList && checkedList.includes(i.id)) {
         return false;
@@ -93,9 +93,10 @@ export default function Expenses() {
       return true;
     });
     // 2. update to local storage and set new state
-    setExpensesList(newExpensesList);
-    localStorage.setItem("expensess", JSON.stringify(newExpensesList));
+    setExpensesList(newexpensesList);
+    localStorage.setItem("expenses", JSON.stringify(newexpensesList));
   };
+
   const calculateTotal = () => {
     let total = 0;
     expensesList.forEach((i) => {
@@ -103,6 +104,7 @@ export default function Expenses() {
     });
     return total;
   };
+
   return (
     <div
       className="container mt-5 mx-auto"
@@ -112,7 +114,7 @@ export default function Expenses() {
     >
       <Card>
         <Card.Body>
-          <Card.Title>expenses</Card.Title>
+          <Card.Title>Expenses</Card.Title>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -197,7 +199,9 @@ export default function Expenses() {
                 </tr>
               )}
               <tr>
-                <td>Total</td>
+                <td colSpan={3} className="text-end">
+                  Total
+                </td>
                 <td>${calculateTotal()}</td>
                 <td></td>
               </tr>
